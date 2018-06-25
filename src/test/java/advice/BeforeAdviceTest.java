@@ -2,6 +2,7 @@ package advice;
 
 import advisor.Seller;
 import advisor.Waiter;
+import advisor.WaiterDelegate;
 import introduce.Monitorable;
 import org.junit.Test;
 import org.springframework.aop.AfterReturningAdvice;
@@ -15,15 +16,29 @@ import proxy.ForumService;
 //@ContextConfiguration(locations = {"classpath:/proxy.xml"})
 public class BeforeAdviceTest {
 
+    String configPath="classpath:/proxy.xml";
+
     @Test
     public void dynamicMethod(){
-       String configPath="classpath:/proxy.xml";
+
        ApplicationContext ctx=new ClassPathXmlApplicationContext(configPath);
        Waiter waiter=(Waiter)ctx.getBean("waiter2");
        waiter.serveTo("hongbo");
        //special client
        waiter.serveTo("John");
        waiter.greetTo("Tom");
+    }
+
+    @Test
+    public void controlFlow(){
+        ApplicationContext ctx=new ClassPathXmlApplicationContext(configPath);
+        Waiter waiter=(Waiter)ctx.getBean("waiterComposable");
+        WaiterDelegate wd= new WaiterDelegate();
+        //本质上还是增强了Waiter类，然后根据是否被调用来筛选增强行为
+        wd.setWaiter(waiter);
+        waiter.serveTo("Peter");
+        waiter.greetTo("Peter");
+        wd.service("Peter");
     }
 
 //    @Test

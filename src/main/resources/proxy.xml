@@ -51,4 +51,38 @@
 		  p:target-ref="waiterTarget"
 		  p:proxyTargetClass="true"/>
 
+
+	<bean id="greetingFlowAdvice" class="advisor.GreetingBeforeAdvice"/>
+	<bean id="waiterFlowTarget" class="advisor.Waiter"/>
+	<!--ControlFlowPointcut类有两个构造函数，参数是调用类或调用类加方法-->
+	<!--<bean id="controlFlowPointcut"-->
+		  <!--class="org.springframework.aop.support.ControlFlowPointcut">-->
+		<!--<constructor-arg type="java.lang.Class"-->
+						 <!--value="advisor.WaiterDelegate"/>-->
+		<!--<constructor-arg type="java.lang.String"-->
+						 <!--value="service"/>-->
+	<!--</bean>-->
+
+	<!--<bean id="controlFlowAdvisor"-->
+		  <!--class="org.springframework.aop.support.DefaultPointcutAdvisor"-->
+		  <!--p:pointcut-ref="controlFlowPointcut"-->
+		  <!--p:advice-ref="greetingFlowAdvice"/>-->
+	<!--<bean id="waiterFlow"-->
+		  <!--class="org.springframework.aop.framework.ProxyFactoryBean"-->
+		  <!--p:interceptorNames="controlFlowAdvisor"-->
+		  <!--p:target-ref="waiterFlowTarget"-->
+		  <!--p:proxyTargetClass="true"/>-->
+
+	<!--复合切面配置-->
+	<bean id="gcp" class="advisor.GreetingComposablePointcut"/>
+    <bean id="composableAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor"
+		  p:pointcut="#{gcp.intersectionPointcut}"
+		  p:advice-ref="greetingFlowAdvice"/>
+	<bean id="waiterComposable" class="org.springframework.aop.framework.ProxyFactoryBean"
+		  p:interceptorNames="composableAdvisor"
+		  p:target-ref="waiterFlowTarget"
+		  p:proxyTargetClass="true"/>
+
+
+
 </beans>
